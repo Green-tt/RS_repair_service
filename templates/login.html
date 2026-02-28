@@ -1,0 +1,9 @@
+<h2>Login</h2>
+<form method="post">
+  <select name="user_id">
+    {% for u in users %}
+      <option value="{{ u.id }}">{{ u.name }} ({{ u.role }})</option>
+    {% endfor %}
+  </select>
+  <button>Login</button>
+</form>

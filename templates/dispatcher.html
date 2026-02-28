@@ -1,0 +1,32 @@
+<h2>Dispatcher</h2>
+<a href="/requests/new">New request</a>
+
+<table border="1">
+<tr>
+<th>ID</th><th>Client</th><th>Status</th><th>Actions</th>
+</tr>
+
+{% for r in requests %}
+<tr>
+<td>{{ r.id }}</td>
+<td>{{ r.clientName }}</td>
+<td>{{ r.status }}</td>
+<td>
+{% if r.status == 'new' %}
+<form method="post" action="/requests/{{ r.id }}/assign">
+<select name="master_id">
+{% for m in masters %}
+<option value="{{ m.id }}">{{ m.name }}</option>
+{% endfor %}
+</select>
+<button>Assign</button>
+</form>
+
+<form method="post" action="/requests/{{ r.id }}/cancel">
+<button>Cancel</button>
+</form>
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>

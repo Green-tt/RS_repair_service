@@ -1,0 +1,30 @@
+<h2>Master</h2>
+
+<table border="1">
+<tr>
+<th>ID</th><th>Client</th><th>Status</th><th>Actions</th>
+</tr>
+
+{% for r in requests %}
+<tr>
+<td>{{ r.id }}</td>
+<td>{{ r.clientName }}</td>
+<td>{{ r.status }}</td>
+<td>
+
+{% if r.status == 'assigned' %}
+<form method="post" action="/requests/{{ r.id }}/take">
+<button>Take</button>
+</form>
+{% endif %}
+
+{% if r.status == 'in_progress' %}
+<form method="post" action="/requests/{{ r.id }}/done">
+<button>Done</button>
+</form>
+{% endif %}
+
+</td>
+</tr>
+{% endfor %}
+</table>
