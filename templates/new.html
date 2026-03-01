@@ -1,8 +1,15 @@
-<h2>New Request</h2>
+{% extends "base.html" %}
+
+{% block title %}Новая заявка{% endblock %}
+
+{% block content %}
+<h2>📝 Новая заявка</h2>
 <form method="post" action="/requests">
-  <input name="clientName" placeholder="Client" required><br>
-  <input name="phone" placeholder="Phone" required><br>
-  <input name="address" placeholder="Address" required><br>
-  <textarea name="problemText" placeholder="Problem" required></textarea><br>
-  <button>Create</button>
+    <input name="clientName" placeholder="Имя клиента" required>
+    <input name="phone" placeholder="Телефон" required>
+    <input name="address" placeholder="Адрес" required>
+    <textarea name="problemText" placeholder="Описание проблемы" required></textarea>
+    <button type="submit">Создать заявку</button>
+    <a href="/dispatcher" style="background: #6c757d; margin-left: 10px;">Отмена</a>
 </form>
+{% endblock %}

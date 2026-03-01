@@ -1,9 +1,18 @@
-<h2>Login</h2>
-<form method="post">
-  <select name="user_id">
-    {% for u in users %}
-      <option value="{{ u.id }}">{{ u.name }} ({{ u.role }})</option>
-    {% endfor %}
-  </select>
-  <button>Login</button>
-</form>
+{% extends "base.html" %}
+
+{% block title %}Вход{% endblock %}
+
+{% block content %}
+<div class="login-form">
+    <h2>🔐 Вход в систему</h2>
+    <form method="post">
+        <select name="user_id" required>
+            <option value="">Выберите пользователя...</option>
+            {% for u in users %}
+            <option value="{{ u.id }}">{{ u.name }} ({{ u.role }})</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Войти</button>
+    </form>
+</div>
+{% endblock %}

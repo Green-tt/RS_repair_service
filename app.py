@@ -79,6 +79,10 @@ def load_user():
     g.user = db.execute("SELECT * FROM users WHERE id=?",
                         (session["user_id"],)).fetchone()
 
+@app.context_processor
+def inject_user():
+    return dict(g=g)
+
 
 @app.route("/")
 def home():

@@ -1,30 +1,57 @@
-<h2>Master</h2>
+{% extends "base.html" %}
 
-<table border="1">
-<tr>
-<th>ID</th><th>Client</th><th>Status</th><th>Actions</th>
-</tr>
+{% block title %}Мастер{% endblock %}
 
-{% for r in requests %}
-<tr>
-<td>{{ r.id }}</td>
-<td>{{ r.clientName }}</td>
-<td>{{ r.status }}</td>
-<td>
+{% block content %}
+<h2>🔧 Мои заявки</h2>
 
-{% if r.status == 'assigned' %}
-<form method="post" action="/requests/{{ r.id }}/take">
-<button>Take</button>
-</form>
-{% endif %}
-
-{% if r.status == 'in_progress' %}
-<form method="post" action="/requests/{{ r.id }}/done">
-<button>Done</button>
-</form>
-{% endif %}
-
-</td>
-</tr>
-{% endfor %}
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Клиент</th>
+            <th>Адрес</th>
+            <th>Проблема</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>#{{ r.id }}</td>
+            <td><strong>{{ r.clientName }}</strong><br><small>{{ r.phone }}</small></td>
+            <td>{{ r.address }}</td>
+            <td>{{ r.problemText[:50] }}{% if r.problemText|length > 50 %}...{% endif %}</td>
+            <td>
+                <span class="status status-{{ r.status }}">
+                    {% if r.status == 'assigned' %}📌 Назначено
+                    {% elif r.status == 'in_progress' %}⚙️ В работе
+                    {% elif r.status == 'done' %}✅ Выполнено
+                    {% endif %}
+                </span>
+            </td>
+            <td>
+                {% if r.status == 'assigned' %}
+                <form method="post" action="/requests/{{ r.id }}/take">
+                    <button type="submit">▶️ Взять в работу</button>
+                </form>
+                {% endif %}
+                
+                {% if r.status == 'in_progress' %}
+                <form method="post" action="/requests/{{ r.id }}/done">
+                    <button type="submit" style="background: #28a745;">✅ Завершить</button>
+                </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" style="text-align: center; padding: 40px;">
+                🎉 Нет назначенных заявок
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+{% endblock %}

@@ -1,32 +1,80 @@
-<h2>Dispatcher</h2>
-<a href="/requests/new">New request</a>
+{% extends "base.html" %}
 
-<table border="1">
-<tr>
-<th>ID</th><th>Client</th><th>Status</th><th>Actions</th>
-</tr>
+{% block title %}Диспетчер{% endblock %}
 
-{% for r in requests %}
-<tr>
-<td>{{ r.id }}</td>
-<td>{{ r.clientName }}</td>
-<td>{{ r.status }}</td>
-<td>
-{% if r.status == 'new' %}
-<form method="post" action="/requests/{{ r.id }}/assign">
-<select name="master_id">
-{% for m in masters %}
-<option value="{{ m.id }}">{{ m.name }}</option>
-{% endfor %}
-</select>
-<button>Assign</button>
-</form>
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>📋 Заявки</h2>
+    <a href="/requests/new">➕ Новая заявка</a>
+</div>
 
-<form method="post" action="/requests/{{ r.id }}/cancel">
-<button>Cancel</button>
-</form>
-{% endif %}
-</td>
-</tr>
-{% endfor %}
+<!-- Фильтр по статусу -->
+<div style="margin: 20px 0;">
+    <form method="get" style="display: flex; gap: 10px; align-items: center;">
+        <label for="status">Фильтр по статусу:</label>
+        <select name="status" id="status" onchange="this.form.submit()">
+            <option value="">Все заявки</option>
+            <option value="new" {% if request.args.get('status') == 'new' %}selected{% endif %}>Новые</option>
+            <option value="assigned" {% if request.args.get('status') == 'assigned' %}selected{% endif %}>Назначенные</option>
+            <option value="in_progress" {% if request.args.get('status') == 'in_progress' %}selected{% endif %}>В работе</option>
+            <option value="done" {% if request.args.get('status') == 'done' %}selected{% endif %}>Выполненные</option>
+            <option value="canceled" {% if request.args.get('status') == 'canceled' %}selected{% endif %}>Отмененные</option>
+        </select>
+    </form>
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Клиент</th>
+            <th>Телефон</th>
+            <th>Статус</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for r in requests %}
+        <tr>
+            <td>#{{ r.id }}</td>
+            <td><strong>{{ r.clientName }}</strong><br><small>{{ r.address }}</small></td>
+            <td>{{ r.phone }}</td>
+            <td>
+                <span class="status status-{{ r.status }}">
+                    {% if r.status == 'new' %}🆕 Новый
+                    {% elif r.status == 'assigned' %}📌 Назначен
+                    {% elif r.status == 'in_progress' %}⚙️ В работе
+                    {% elif r.status == 'done' %}✅ Выполнен
+                    {% elif r.status == 'canceled' %}❌ Отменен
+                    {% endif %}
+                </span>
+            </td>
+            <td>
+                {% if r.status == 'new' %}
+                <div class="action-group">
+                    <form method="post" action="/requests/{{ r.id }}/assign">
+                        <select name="master_id" required>
+                            <option value="">Выбрать мастера...</option>
+                            {% for m in masters %}
+                            <option value="{{ m.id }}">{{ m.name }}</option>
+                            {% endfor %}
+                        </select>
+                        <button type="submit">👤 Назначить</button>
+                    </form>
+                    <form method="post" action="/requests/{{ r.id }}/cancel">
+                        <button type="submit" style="background: #dc3545;">❌ Отменить</button>
+                    </form>
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="5" style="text-align: center; padding: 40px;">
+                🕒 Нет заявок
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
 </table>
+{% endblock %}
